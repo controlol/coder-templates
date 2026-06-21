@@ -29,17 +29,13 @@ RUN mkdir -p /etc/apt/keyrings \
     && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends nodejs \
     && rm -rf /var/lib/apt/lists/*
 
-# Let the `coder` user install global npm packages without sudo.
-RUN mkdir -p /usr/local/lib/node_modules /usr/local/bin \
-    && chown -R coder:coder /usr/local/lib/node_modules /usr/local/bin
+# --- Claude Code CLI + handy global tooling --------------------------------
+# Installed as root: NodeSource's npm uses prefix /usr, so global modules go to
+# /usr/lib/node_modules and the `claude`/`pnpm` shims land in /usr/bin — on PATH
+# for the coder user, no per-user chown needed.
+RUN npm install -g @anthropic-ai/claude-code pnpm
 
 USER coder
-
-# --- Claude Code CLI -------------------------------------------------------
-RUN npm install -g @anthropic-ai/claude-code
-
-# Handy global tooling. Add/remove to taste.
-RUN npm install -g pnpm
 
 # Make zsh + a sane default editor available; keep bash as login shell so the
 # enterprise-base entrypoint stays happy. Users can `chsh` or set it via dotfiles.

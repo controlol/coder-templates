@@ -32,9 +32,12 @@ RUN mkdir -p /etc/apt/keyrings \
         > /etc/apt/sources.list.d/nodesource.list \
     && apt-get update \
     && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends nodejs \
-    && rm -rf /var/lib/apt/lists/* \
-    && mkdir -p /usr/local/lib/node_modules /usr/local/bin \
-    && chown -R coder:coder /usr/local/lib/node_modules /usr/local/bin
+    && rm -rf /var/lib/apt/lists/*
+
+# --- Claude Code CLI + pnpm (installed as root) ----------------------------
+# NodeSource's npm uses prefix /usr, so global installs need root; the `claude`
+# and `pnpm` shims land in /usr/bin, on PATH for the coder user.
+RUN npm install -g @anthropic-ai/claude-code pnpm
 
 # --- SDK locations ----------------------------------------------------------
 # Kept under /opt (NOT /home/coder) so image rebuilds always take effect — the
@@ -70,8 +73,5 @@ RUN git clone --depth 1 -b ${FLUTTER_CHANNEL} https://github.com/flutter/flutter
     && flutter config --no-analytics --android-sdk ${ANDROID_SDK_ROOT} \
     && yes | flutter doctor --android-licenses >/dev/null 2>&1 || true \
     && flutter precache --android
-
-# --- Claude Code CLI + handy global tooling --------------------------------
-RUN npm install -g @anthropic-ai/claude-code pnpm
 
 ENV EDITOR=vim
