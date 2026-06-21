@@ -29,11 +29,16 @@ RUN mkdir -p /etc/apt/keyrings \
     && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends nodejs \
     && rm -rf /var/lib/apt/lists/*
 
-# --- Claude Code CLI + handy global tooling --------------------------------
-# Installed as root: NodeSource's npm uses prefix /usr, so global modules go to
-# /usr/lib/node_modules and the `claude`/`pnpm` shims land in /usr/bin — on PATH
-# for the coder user, no per-user chown needed.
-RUN npm install -g @anthropic-ai/claude-code pnpm
+# --- Claude Code CLI (npm) + pnpm (Corepack) -------------------------------
+# claude installed as root: NodeSource's npm uses prefix /usr, so the shim lands
+# in /usr/bin — on PATH for the coder user. pnpm comes from Corepack (bundled
+# with Node); COREPACK_HOME is a shared path so the coder user finds the cached
+# pnpm at runtime without a re-download.
+ENV COREPACK_HOME=/opt/corepack
+RUN npm install -g @anthropic-ai/claude-code \
+    && corepack enable \
+    && corepack prepare pnpm@latest --activate \
+    && chmod -R a+rX "$COREPACK_HOME"
 
 USER coder
 
