@@ -15,6 +15,7 @@ workspace as a Docker container with:
 - **code-server** (VS Code in the browser)
 - **Node.js 26** (Current line; baked into the image — set `NODE_MAJOR=24` for Active LTS)
 - **Claude Code CLI** (`claude`, baked into the image)
+- **GitHub CLI** (`gh`, baked into the image)
 - A **persistent `/home/coder` volume** that survives stop/start
 - **dotfiles** support so each user can personalize their box
 

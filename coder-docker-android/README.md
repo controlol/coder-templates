@@ -13,6 +13,7 @@ built as a sibling of the `coder-docker-claude` (node) template — same
   configured for software GL (`swiftshader_indirect`) so it renders headless.
 - **Flutter** (stable) under `/opt/flutter`, pre-cached for Android.
 - **Node LTS + Claude Code CLI** (`@anthropic-ai/claude-code`) and `pnpm`.
+- **GitHub CLI** (`gh`).
 - **XFCE** desktop for the KasmVNC browser desktop.
 
 The SDK/Flutter live under `/opt` (not `/home/coder`) so image rebuilds always

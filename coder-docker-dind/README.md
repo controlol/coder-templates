@@ -13,6 +13,7 @@ daemon. Sibling of the other templates: same `enterprise-base:ubuntu` base, same
 - **hadolint** — lint Dockerfiles.
 - **dive** — inspect image layers / wasted space.
 - **Node LTS + Claude Code CLI** (`@anthropic-ai/claude-code`) and `pnpm`.
+- **GitHub CLI** (`gh`).
 
 ## How it works (DinD)
 

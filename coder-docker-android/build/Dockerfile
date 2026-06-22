@@ -31,6 +31,17 @@ RUN apt-get update \
         libasound2 libdbus-1-3 libx11-xcb1 \
     && rm -rf /var/lib/apt/lists/*
 
+# --- GitHub CLI (gh) via the official apt repo -----------------------------
+RUN mkdir -p /etc/apt/keyrings \
+    && curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg \
+        | gpg --dearmor -o /etc/apt/keyrings/githubcli-archive-keyring.gpg \
+    && chmod go+r /etc/apt/keyrings/githubcli-archive-keyring.gpg \
+    && echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" \
+        > /etc/apt/sources.list.d/github-cli.list \
+    && apt-get update \
+    && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends gh \
+    && rm -rf /var/lib/apt/lists/*
+
 # --- Node.js LTS + Claude CLI ----------------------------------------------
 # Node is needed for the `claude` CLI (and handy for React Native later).
 RUN mkdir -p /etc/apt/keyrings \
