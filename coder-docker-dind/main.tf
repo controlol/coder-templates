@@ -180,6 +180,9 @@ module "code-server" {
   extensions = [
     "anthropic.claude-code",
     "ms-azuretools.vscode-docker",
+    "mhutchie.git-graph",
+    "GitHub.vscode-pull-request-github",
+    "GitHub.vscode-github-actions",
   ]
 }
 

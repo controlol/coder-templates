@@ -155,6 +155,9 @@ module "code-server" {
   # Pre-install some extensions from OpenVSX.
   extensions = [
     "anthropic.claude-code",
+    "mhutchie.git-graph",
+    "GitHub.vscode-pull-request-github",
+    "GitHub.vscode-github-actions",
   ]
 }
 

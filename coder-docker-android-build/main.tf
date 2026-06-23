@@ -162,6 +162,9 @@ module "code-server" {
     "fwcd.kotlin",
     "Dart-Code.dart-code",
     "Dart-Code.flutter",
+    "mhutchie.git-graph",
+    "GitHub.vscode-pull-request-github",
+    "GitHub.vscode-github-actions",
   ]
 }
 
