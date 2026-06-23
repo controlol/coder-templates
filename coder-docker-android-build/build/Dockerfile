@@ -10,16 +10,17 @@ ARG BUILD_TOOLS=35.0.0
 # cmdline-tools download build number (self-updates via sdkmanager afterwards).
 ARG CMDLINE_TOOLS_BUILD=11076708
 ARG NODE_MAJOR=24
-ARG FLUTTER_CHANNEL=stable
+# Pin Flutter to a concrete tag (latest 3.44 patch). Bump as new patches land.
+ARG FLUTTER_VERSION=3.44.2
 
 USER root
 
 # --- System packages --------------------------------------------------------
-# JDK 17 (Android Gradle Plugin baseline) + general CLI tooling. No emulator /
-# desktop / GL libraries — this image only compiles and packages apps.
+# General CLI tooling. No emulator / desktop / GL libraries — this image only
+# compiles and packages apps. (JDK 25 comes from the Adoptium repo below —
+# Ubuntu's repos don't carry it.)
 RUN apt-get update \
     && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-        openjdk-17-jdk \
         ca-certificates curl gnupg git unzip zip xz-utils jq ripgrep zsh \
     && rm -rf /var/lib/apt/lists/*
 
@@ -32,6 +33,18 @@ RUN mkdir -p /etc/apt/keyrings \
         > /etc/apt/sources.list.d/github-cli.list \
     && apt-get update \
     && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends gh \
+    && rm -rf /var/lib/apt/lists/*
+
+# --- JDK 25 (Eclipse Temurin via the Adoptium apt repo) ---------------------
+# Ubuntu's repos don't carry JDK 25; Adoptium does. Installed as the default
+# JDK so Flutter/Gradle pick it up via JAVA_HOME (set below).
+RUN mkdir -p /etc/apt/keyrings \
+    && curl -fsSL https://packages.adoptium.net/artifactory/api/gpg/key/public \
+        | gpg --dearmor -o /etc/apt/keyrings/adoptium.gpg \
+    && echo "deb [signed-by=/etc/apt/keyrings/adoptium.gpg] https://packages.adoptium.net/artifactory/deb $(. /etc/os-release && echo $VERSION_CODENAME) main" \
+        > /etc/apt/sources.list.d/adoptium.list \
+    && apt-get update \
+    && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends temurin-25-jdk \
     && rm -rf /var/lib/apt/lists/*
 
 # --- Node.js LTS + Claude CLI ----------------------------------------------
@@ -59,7 +72,7 @@ RUN npm install -g @anthropic-ai/claude-code \
 # --- SDK locations ----------------------------------------------------------
 # Kept under /opt (NOT /home/coder) so image rebuilds always take effect — the
 # persistent home volume mounts over /home/coder and would otherwise shadow it.
-ENV JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
+ENV JAVA_HOME=/usr/lib/jvm/temurin-25-jdk-amd64
 ENV ANDROID_SDK_ROOT=/opt/android-sdk
 ENV ANDROID_HOME=/opt/android-sdk
 ENV FLUTTER_HOME=/opt/flutter
@@ -84,8 +97,8 @@ RUN curl -fsSL -o /tmp/cmdline-tools.zip \
         "platforms;android-${ANDROID_API}" \
         "build-tools;${BUILD_TOOLS}"
 
-# --- Flutter (stable) -------------------------------------------------------
-RUN git clone --depth 1 -b ${FLUTTER_CHANNEL} https://github.com/flutter/flutter.git ${FLUTTER_HOME} \
+# --- Flutter 3.44.x ---------------------------------------------------------
+RUN git clone --depth 1 -b ${FLUTTER_VERSION} https://github.com/flutter/flutter.git ${FLUTTER_HOME} \
     && git config --global --add safe.directory ${FLUTTER_HOME} \
     && flutter config --no-analytics --android-sdk ${ANDROID_SDK_ROOT} \
     && yes | flutter doctor --android-licenses >/dev/null 2>&1 || true \

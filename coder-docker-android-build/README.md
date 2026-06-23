@@ -7,9 +7,10 @@ compiling apps, with no emulator and no desktop/VNC. It's the lean sibling of
 
 ## What's in the image (`build/Dockerfile`)
 
-- **JDK 17** + **Android SDK** (cmdline-tools, platform-tools, `platforms;android-35`,
-  `build-tools;35.0.0`) under `/opt/android-sdk`. No emulator, no system image.
-- **Flutter** (stable) under `/opt/flutter`, pre-cached for Android.
+- **JDK 25** (Eclipse Temurin) + **Android SDK** (cmdline-tools, platform-tools,
+  `platforms;android-35`, `build-tools;35.0.0`) under `/opt/android-sdk`. No
+  emulator, no system image.
+- **Flutter 3.44.x** under `/opt/flutter`, pre-cached for Android.
 - **Node LTS + Claude Code CLI** (`@anthropic-ai/claude-code`) and `pnpm`.
 - **GitHub CLI** (`gh`).
 

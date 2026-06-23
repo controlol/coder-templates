@@ -7,11 +7,11 @@ built as a sibling of the `coder-docker-claude` (node) template — same
 
 ## What's in the image (`build/Dockerfile`)
 
-- **JDK 17** + **Android SDK** (cmdline-tools, platform-tools, `platforms;android-35`,
-  `build-tools;35.0.0`, `emulator`) under `/opt/android-sdk`.
+- **JDK 25** (Eclipse Temurin) + **Android SDK** (cmdline-tools, platform-tools,
+  `platforms;android-35`, `build-tools;35.0.0`, `emulator`) under `/opt/android-sdk`.
 - A ready-to-run **AVD** (`pixel_api35`, Pixel 6, `google_apis;x86_64`),
   configured for software GL (`swiftshader_indirect`) so it renders headless.
-- **Flutter** (stable) under `/opt/flutter`, pre-cached for Android.
+- **Flutter 3.44.x** under `/opt/flutter`, pre-cached for Android.
 - **Node LTS + Claude Code CLI** (`@anthropic-ai/claude-code`) and `pnpm`.
 - **GitHub CLI** (`gh`).
 - **XFCE** desktop for the KasmVNC browser desktop.
